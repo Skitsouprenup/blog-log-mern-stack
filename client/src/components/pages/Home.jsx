@@ -2,10 +2,11 @@ import React from 'react'
 import { Link } from 'react-router'
 import Categories from '../partials/home/Categories'
 import SearchBox from '../partials/home/SearchBox'
+import FeaturedPosts from '../partials/home/FeaturedPosts'
 
 const Home = () => {
   return (
-    <div className='flex flex-col gap-y-[1rem] p-[1.5rem] h-screen'>
+    <div className='flex flex-col gap-y-[1rem] p-[1.5rem]'>
       <div className='flex gap-x-[0.5rem] justify-between items-center'>
         <div className='flex flex-col gap-y-[1rem]'>
           <h1 className='text-[2rem] sm:text-[2.25rem] font-bold'>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras convallis, 
@@ -53,6 +54,7 @@ const Home = () => {
       </div>
       <SearchBox />
       <Categories />
+      <FeaturedPosts />
     </div>
   )
 }
