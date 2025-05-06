@@ -1,9 +1,9 @@
-import {useState} from 'react'
+import {Fragment, useState} from 'react'
 import BlogLogo from '../../assets/blog_log_logo.png'
 import { btnDesktop,btnMobile } from '../../js/navbarbuttons'
 import { Link } from 'react-router'
 
-import { SignedIn, UserButton } from '@clerk/clerk-react'
+import { SignedIn, SignedOut, UserButton } from '@clerk/clerk-react'
 
 const SiteLogo = () => {
 
@@ -15,6 +15,33 @@ const SiteLogo = () => {
                 </Link>
             </button>
         </div>
+    )
+}
+
+const NavbarButtonWrapper = ({wrap, children}) => {
+
+    if(wrap) {
+        return (
+            <SignedOut>
+                {children}
+            </SignedOut>
+        )
+    }
+    else {
+        return <>{children}</>
+    }
+}
+
+const NavbarButton = ({item}) => {
+    return (
+        <button
+            type="button" 
+            className={item.className}
+        >
+            <Link to={item.href}>
+                {item.title}
+            </Link>
+        </button>
     )
 }
 
@@ -34,15 +61,9 @@ const Navbar = () => {
                 <div className='flex gap-x-[0.75rem] items-center'>
                     {
                         btnDesktop.map((item, index) => (
-                            <button 
-                                type="button" 
-                                key={index}
-                                className={item.className}
-                            >
-                                <Link to={item.href}>
-                                    {item.title}
-                                </Link>
-                            </button>
+                            <NavbarButtonWrapper wrap={item.title !== 'Login' ? false : true} key={index}>
+                                <NavbarButton item={item}/>
+                            </NavbarButtonWrapper>
                         ))
                     }
                     <SignedIn>
@@ -52,7 +73,7 @@ const Navbar = () => {
             </div>
 
             {/* Mobile */}
-            <div className={`sm:hidden`}>
+            <div className={`sm:hidden fixed z-10 w-screen`}>
 
                 <div className='p-[0.5rem] flex justify-between gap-x-[0.5rem] border-b border-gray-400/50'>
                     <SiteLogo />
@@ -101,19 +122,16 @@ const Navbar = () => {
                 >
                     {
                         btnMobile.map((item, index) => (
-                            <button 
-                                type="button" 
-                                key={index}
-                                className={item.className}
-                            >
-                                <Link to={item.href}>
-                                    {item.title}
-                                </Link>
-                            </button>
+                            <NavbarButtonWrapper wrap={item.title !== 'Login' ? false : true} key={index}>
+                                <NavbarButton item={item}/>
+                            </NavbarButtonWrapper>
                         ))
                     }
                 </div>
             </div>
+            {/* Dummy div to fake navbar still being part 
+                of document flow even if the navbar is fixed */}
+            <div className='sm:hidden w-screen h-[4rem]'></div>
         </div>
     )
 }
