@@ -1,8 +1,9 @@
 import React from 'react'
 import { Link } from 'react-router'
 import Categories from '../partials/home/Categories'
-import SearchBox from '../partials/home/SearchBox'
 import FeaturedPosts from '../partials/home/FeaturedPosts'
+import RecentPosts from '../partials/home/RecentPosts'
+import SearchBox from '../partials/SearchBox'
 
 const Home = () => {
   return (
@@ -55,6 +56,7 @@ const Home = () => {
       <SearchBox />
       <Categories />
       <FeaturedPosts />
+      <RecentPosts />
     </div>
   )
 }

@@ -73,7 +73,7 @@ const Navbar = () => {
             </div>
 
             {/* Mobile */}
-            <div className={`sm:hidden fixed z-10 w-screen`}>
+            <div className={`sm:hidden fixed z-10 w-screen bg-zinc-300`}>
 
                 <div className='p-[0.5rem] flex justify-between gap-x-[0.5rem] border-b border-gray-400/50'>
                     <SiteLogo />
