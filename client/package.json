@@ -15,6 +15,7 @@
     "imagekitio-react": "^4.3.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-quill-new": "^3.4.6",
     "react-router": "^7.5.3",
     "tailwindcss": "^4.1.5"
   },

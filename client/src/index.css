@@ -12,3 +12,13 @@
 .spinning_text_speed {
   animation-duration: 8s;
 }
+
+.ql-container, .ql-toolbar, .ql-editor {
+  border: none !important;
+  padding: 0;
+  margin: 0;
+}
+
+.ql-editor {
+  height: 300px !important;
+}
