@@ -11,7 +11,12 @@ const app = express()
 const port = 3000
 const hostName = '127.0.0.1'
 
-app.use(clerkMiddleware)
+// This middleware checks the request's cookies and headers for
+// a session JWT and if found, attaches the Auth object to the request object 
+// under the auth key.
+//You can get the JWT token in getToken() function in useAuth() function
+//of clerk-react.
+app.use(clerkMiddleware())
 
 // Move this route on top of express.json()
 // so that express won't modify the body of request

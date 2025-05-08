@@ -3,7 +3,7 @@ import BlogLogo from '../../assets/blog_log_logo.png'
 import { btnDesktop,btnMobile } from '../../js/navbarbuttons'
 import { Link } from 'react-router'
 
-import { SignedIn, SignedOut, UserButton } from '@clerk/clerk-react'
+import { SignedIn, SignedOut, useAuth, UserButton } from '@clerk/clerk-react'
 
 const SiteLogo = () => {
 
@@ -48,7 +48,7 @@ const NavbarButton = ({item}) => {
 const Navbar = () => {
     const[open, setOpen] = useState(false)
 
-
+    const {getToken} = useAuth()
 
     return (
         <div 
