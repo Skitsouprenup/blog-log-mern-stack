@@ -2,7 +2,7 @@ import React from 'react'
 import testImg from '../../assets/test_img.jpg'
 import testAvatar from '../../assets/test_avatar.jpg'
 import Actions from '../partials/singlepost/Actions'
-import Search from '../partials/singlepost/Search'
+import Search from '../partials/Search'
 import CommentList from '../partials/singlepost/CommentList'
 
 const SinglePost = () => {
@@ -36,7 +36,7 @@ const SinglePost = () => {
         </div>
 
         {/* Sidebar */}
-        <div className='flex flex-col gap-y-[1rem] top-0 h-max sticky'>
+        <div className='flex flex-col gap-y-[1rem] top-0 h-max sticky max-lg:hidden'>
 
           {/* Author Info */}
           <div className='flex flex-col gap-y-[0.75rem] pt-[0.5rem]'>
@@ -66,7 +66,7 @@ const SinglePost = () => {
           <Actions />
 
           {/* Search Box */}
-          <Search />
+          <Search placeholder='Search for posts...'/>
         </div>
       </div>
 
