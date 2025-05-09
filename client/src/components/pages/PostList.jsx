@@ -1,9 +1,32 @@
 import {useState} from 'react'
 import testImg from '../../assets/test_img.jpg'
 import SideMenu from '../partials/postlist/SideMenu'
+import { useQuery } from '@tanstack/react-query'
+import axios from 'axios'
+
+const fetchPosts = async () => {
+  const apiUrl = `${import.meta.env.VITE_API_URL}/posts`
+  const res = await axios.get(apiUrl)
+  return res.data
+}
 
 const PostList = () => {
   const [open, setOpen] = useState(false)
+
+  const { isPending, error, data } = useQuery({
+    queryKey: ['fetchPosts'],
+    queryFn: () => fetchPosts()
+  })
+
+  if(isPending) {
+    return <div>Loading...</div>
+  }
+
+  if(error) {
+    return <div>Error fetching data...</div>
+  }
+
+  console.log(data)
 
   return (
     <div 

@@ -1,4 +1,4 @@
-import UserModel from "../db/models/user.model"
+import UserModel from "../db/models/user.model.js"
 
 export const checkClerkUser = async (res, user_id) => {
     if(!user_id) {
@@ -6,7 +6,7 @@ export const checkClerkUser = async (res, user_id) => {
         return null
     }
 
-    const user = await UserModel.findOne({user_id})
+    const user = await UserModel.findOne({clerk_id: user_id})
 
     if(!user) {
         res.status(404).json("User Doesn't Exist.")

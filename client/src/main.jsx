@@ -1,11 +1,16 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { ClerkProvider } from '@clerk/clerk-react'
+import {
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query'
 
 import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router"
+import { ToastContainer } from 'react-toastify'
 
 import './index.css'
 import MainLayout from './layouts/MainLayout.jsx'
@@ -15,6 +20,9 @@ import Login from './components/pages/Login.jsx'
 import Register from './components/pages/Register.jsx'
 import WriteBlog from './components/pages/WriteBlog.jsx'
 import SinglePost from './components/pages/SinglePost.jsx'
+
+// Create a client
+const queryClient = new QueryClient()
 
 const router = createBrowserRouter([
   {
@@ -39,7 +47,7 @@ const router = createBrowserRouter([
         Component: WriteBlog,
       },
       {
-        path: "/:slug",
+        path: "/:id/:slug",
         Component: SinglePost,
       },
     ]
@@ -57,7 +65,10 @@ if (!PUBLISHABLE_KEY) {
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl='/'>
-      <RouterProvider router={router} />
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router} />
+        <ToastContainer position="bottom-right"/>
+      </QueryClientProvider>
     </ClerkProvider>
   </StrictMode>
 )
