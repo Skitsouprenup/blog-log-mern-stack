@@ -3,8 +3,17 @@ import { checkClerkUser } from "../utils/clerk.js"
 import { uploadPostCoverImg } from "../utils/imgkit.js"
 
 export const getPosts = async (req, res) => {
-    const posts = await PostModel.find()
-    return res.status(200).json(posts)
+    //1 is default page
+    const page = parseInt(req.query.page) || 1
+    //5 is default limit
+    const limit = parseInt(req.query.limit) || 5
+
+    const postsCount = await PostModel.countDocuments()
+    const morePages = page*limit < postsCount
+
+    const posts = await PostModel.find({},'_id image createdAt category title desc slug').
+    limit(limit).skip((page-1)*limit).populate('author', 'username -_id')
+    return res.status(200).json({posts, morePages})
 }
 
 export const getPost = async (req, res) => {
@@ -23,11 +32,28 @@ export const createPost = async (req,res) => {
 
     //console.log(req.body)
     let slug = req.body.title.replace(/ /g, '-').toLowerCase()
+    // Sanitize slug because it will be placed in the url
+    // to mitigate potential XSS or other kind of attacks.
+    // The regex here only allows alpha-numeric characters and
+    // the '-' character.
+    // '^' is a negation meaning, all characters that don't
+    // match the condition below will be removed
+    slug = slug.replace(/[^a-zA-Z0-9\-]/g, '')
+
+    // Sanitize description and title because it will be placed in an HTML document.
+    // Note: React automatically converts everything we put in a component
+    // in String. This may not be needed unless you're putting them in HTML document
+    // using innerHTML() or react's dangerouslySetInnerHTML() functions.
+    // Replace angled brackets with their symbols to mitigate XSS attacks
+    let postDesc = req.body.desc.replace(/</g, '&lt;')
+    postDesc = postDesc.replace(/>/g, '&gt;')
+    let postTitle = req.body.title.replace(/</g, '&lt;')
+    postTitle = postTitle.replace(/>/g, '&gt;')
 
     const coverImg = req.body.coverImg
     //Note: content comes from react-quill editor may not be
     //properly sanitized.
-    const record = { author:user._id, slug, ...req.body}
+    const record = { author:user._id, slug, ...req.body, desc: postDesc, title: postTitle}
     delete record['coverImg']
 
     
@@ -36,6 +62,14 @@ export const createPost = async (req,res) => {
     if(createdPost) {
 
         const postCover = await uploadPostCoverImg(coverImg, user._id, createdPost._id)
+
+        //If cover image is not uploaded
+        if(!postCover) {
+            //Delete the newly created post.
+            await PostModel.deleteOne({ _id: createdPost._id })
+            return res.status(500).json("Cover Image Upload Failed.")
+        }
+
         createdPost.image = postCover.url
         await createdPost.save()
 

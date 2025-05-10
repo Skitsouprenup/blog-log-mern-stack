@@ -17,10 +17,12 @@
     "imagekitio-react": "^4.3.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-infinite-scroll-component": "^6.1.0",
     "react-quill-new": "^3.4.6",
     "react-router": "^7.5.3",
     "react-toastify": "^11.0.5",
-    "tailwindcss": "^4.1.5"
+    "tailwindcss": "^4.1.5",
+    "timeago.js": "^4.0.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.22.0",

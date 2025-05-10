@@ -13,7 +13,8 @@ export const encodeImageFileAsURL = (e, setImg) => {
 
 export const trim_text = (text, threshold = 10, trim_ln = 7) => {
     if(threshold < 10) return text
-    //-3 because I want space for the three dots
+    //-3 because three dots will replace the 
+    // remaining three characters
     if(trim_ln >= (threshold-3)) return text
 
     const ln = text.length

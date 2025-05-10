@@ -1,6 +1,6 @@
 import { IKImage } from 'imagekitio-react';
 
-const Image = ({className='', alt='image', width, height, src}) => {
+const ImgKitImage = ({className='', alt='image', width, height, src}) => {
     const urlEndPoint = import.meta.env.VITE_IMGKIT_URL_ENDPOINT
 
     return (
@@ -23,4 +23,4 @@ const Image = ({className='', alt='image', width, height, src}) => {
     )
 }
 
-export default Image
+export default ImgKitImage

@@ -5,15 +5,19 @@ import Search from '../partials/Search'
 import CommentList from '../partials/singlepost/CommentList'
 import AuthorInfo from '../partials/singlepost/AuthorInfo'
 
+import { Link } from 'react-router'
+
 const SinglePost = () => {
   return (
     <div className='flex flex-col gap-y-[2.5rem] px-[1rem] lg:px-[4rem] w-[100%] py-[1.5rem] items-center'>
       <div className='flex flex-col gap-y-[0.25rem] w-[100%]'>
-        <h1
-          className='text-xl font-semibold'
+        <button type='button'
+          className='text-xl font-semibold flex hover:underline'
         >
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris a viverra neque.
-        </h1>
+          <Link>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris a viverra neque.
+          </Link>
+        </button>
 
         <p className='text-sm'>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean finibus imperdiet sollicitudin. Etiam nec blandit quam.
