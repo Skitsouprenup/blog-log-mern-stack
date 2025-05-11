@@ -1,13 +1,13 @@
-import testAvatar from '../../../assets/test_avatar.jpg'
+import ImgKitImage from '../../utils/ImgKitImage'
 
 
-const AuthorInfo = () => {
+const AuthorInfo = ({data}) => {
   return (
     <div className='flex flex-col gap-y-[0.75rem] pt-[0.5rem]'>
         <h3 className='font-medium'>Author</h3>
         <div className='flex gap-x-[0.5rem] items-center'>
-            <img src={testAvatar} className='w-[64px] rounded-full'/>
-            <p>John Doe</p>
+            <ImgKitImage width="64px" src={data?.avatar} className='max-w-[64px] rounded-full'/>
+            <p>{data?.username}</p>
         </div>
         <p className='text-zinc-600 text-sm'>
             Sed non accumsan nunc. Integer semper sollicitudin dolor, ut vehicula mi elementum a.

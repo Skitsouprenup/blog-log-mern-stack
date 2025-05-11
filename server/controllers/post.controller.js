@@ -12,12 +12,13 @@ export const getPosts = async (req, res) => {
     const morePages = page*limit < postsCount
 
     const posts = await PostModel.find({},'_id image createdAt category title desc slug').
-    limit(limit).skip((page-1)*limit).populate('author', 'username -_id')
+    limit(limit).skip((page-1)*limit).populate('author', 'username -_id').sort({ createdAt: -1 })
     return res.status(200).json({posts, morePages})
 }
 
 export const getPost = async (req, res) => {
-    const post = PostModel.find({slug: req.params.slug})
+    const post = await PostModel.findOne({_id: req.params.id}, 
+    'image createdAt category title desc content author _id').populate('author', 'username avatar -_id')
     return res.status(200).json(post)
 }
 
@@ -51,7 +52,7 @@ export const createPost = async (req,res) => {
     postTitle = postTitle.replace(/>/g, '&gt;')
 
     const coverImg = req.body.coverImg
-    //Note: content comes from react-quill editor may not be
+    //Note: 'content' property comes from react-quill editor may not be
     //properly sanitized.
     const record = { author:user._id, slug, ...req.body, desc: postDesc, title: postTitle}
     delete record['coverImg']
@@ -82,9 +83,7 @@ export const createPost = async (req,res) => {
         })
     }
     
-
-    return res.status(200).json("success")
-    //return res.status(500).json("Can't Create Post. Internal Server Error.")
+    return res.status(500).json("Can't Create Post. Internal Server Error.")
 }
 
 export const deletePost = async (req,res) => {

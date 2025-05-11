@@ -1,35 +1,62 @@
-import React from 'react'
+import { useQuery } from '@tanstack/react-query'
 import Comment from './Comment'
+import axios from 'axios'
+import { useUser } from '@clerk/clerk-react'
 
-const CommentList = () => {
-  return (
-    <div className='flex flex-col gap-y-[0.75rem] pt-[2rem]'>
-      <h3 className='font-medium text-lg'>Comments</h3>
+const fetchComments = async (postId) => {
+    const apiUrl = `${import.meta.env.VITE_API_URL}/comments/${postId}`
+    const res = await axios.get(apiUrl)
+    return res.data
+  }
 
-      <div 
-        className='flex gap-[0.75rem] p-[0.5rem] bg-stone-50 rounded-xl 
-        w-[100%] drop-shadow-md items-center'
-      >
-        <textarea
-          rows='2'
-          className='resize-none flex-1 text-xl outline-none border border-zinc-300 rounded-lg p-[0.25rem]'
-        ></textarea>
+const CommentList = ({postId, mutation}) => {
+    const {user} = useUser()
 
-        <button 
-          type='button' 
-          className='p-[0.75rem] bg-amber-500 cursor-pointer
-          hover:bg-amber-400 h-[fit-content] rounded-lg'
-        >
-          Comment
-        </button>
-      </div>
+    const { isPending, error, data } = 
+        useQuery({ queryKey: ['comments', postId], queryFn: () => fetchComments(postId) })
 
-      <div className='flex flex-col gap-y-[1.25rem] py-[1.25rem]'>
-        <Comment />
-        <Comment />
-      </div>
-    </div>
-  )
+    if(isPending) {
+        return <div className='text-md font-semibold'>Loading...</div>
+    }
+
+    if(error) {
+        return <div className='text-md font-semibold'>Error fetching comments...</div>
+    }
+
+    if(data?.comments && data.comments.length === 0) {
+        return <div className='text-md font-semibold'>This post has no comments...</div>
+    }
+
+    return (
+        <div className='flex flex-col gap-y-[1.25rem] py-[1.25rem]'>
+            {/* 
+                Optimistic mutation in react-query. In other words, 
+                display the data immediately even if the data is not 
+                yet sent to the database.
+            */}
+            {
+                mutation.isPending && (
+                    //'variables' is the payload that we put in 'mutationFn'
+                    //function
+                    <Comment data={
+                        {
+                            content: `${mutation.variables.content} (Sending...)`,
+                            createdAt: new Date.now(),
+                            author: {
+                                avatar: user.imageUrl,
+                                username: user.username
+                            }
+                        }
+                    }/>
+                )
+            }
+            {
+                data?.comments && data.comments.map((item,index) => (
+                    <Comment data={item} key={index} />
+                ))
+            }
+        </div>
+    )
 }
 
 export default CommentList
