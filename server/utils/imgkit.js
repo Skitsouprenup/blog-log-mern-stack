@@ -14,3 +14,10 @@ export const uploadPostCoverImg = async (imgBase64, user_id, post_id) => {
 
   return response
 }
+
+export const deletePostCoverImg = (fileId) => {
+  imgKit.deleteFile(fileId, function(error, result) {
+    if(error) console.log(error);
+    else console.log(result);
+});
+}

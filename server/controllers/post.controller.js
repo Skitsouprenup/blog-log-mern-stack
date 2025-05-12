@@ -1,6 +1,7 @@
+import CommentModel from "../db/models/comment.model.js"
 import PostModel from "../db/models/post.model.js"
 import { checkClerkUser } from "../utils/clerk.js"
-import { uploadPostCoverImg } from "../utils/imgkit.js"
+import { deletePostCoverImg, uploadPostCoverImg } from "../utils/imgkit.js"
 
 export const getPosts = async (req, res) => {
     //1 is default page
@@ -72,10 +73,8 @@ export const createPost = async (req,res) => {
         }
 
         createdPost.image = postCover.url
+        createdPost.image_id = postCover.fileId
         await createdPost.save()
-
-        user.posts.push(createdPost._id)
-        await user.save()
 
         return res.status(201).json({
             id: createdPost._id,
@@ -91,6 +90,28 @@ export const deletePost = async (req,res) => {
 
     const user = await checkClerkUser(res, clerk_Id)
     if(!user) return
+
+    const post = await PostModel.findOne({_id: req.params.id}, 'saved_by_users image_id').
+    populate('saved_by_users')
+
+    //Remove post entry in every user that saved this post
+    for(let i = 0; i < post.saved_by_users.length; i++) {
+        for(let j = 0; j < post.saved_by_users[i].posts.length; j++) {
+            if(req.params.id === post.saved_by_users[i].posts[j].toString()) {
+                post.saved_by_users[i].posts.splice(j, 1)
+                await post.saved_by_users[i].save()
+                break
+            }
+        }
+    }
+
+    const deletedComments = await CommentModel.deleteMany({post: req.params.id})
+
+    if(!deletedComments) {
+        return res.status(500).json("Delete Operation Failed. Internal Server Error.")
+    }
+
+    if(post?.image_id) deletePostCoverImg(post.image_id)
 
     const deletedPost = await PostModel.findByIdAndDelete({
         _id:req.params.id,

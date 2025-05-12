@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema({
     },
     avatar: String,
     posts: {
-        type: [String],
+        type: [{type:mongoose.Schema.Types.ObjectId, ref: "Posts"}],
         default: []
     }
 }, {timestamps: true});

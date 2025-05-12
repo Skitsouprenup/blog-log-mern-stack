@@ -5,6 +5,10 @@ const postSchema = new mongoose.Schema({
         type: String,
         default: ''
     },
+    image_id: {
+        type: String,
+        default: ''
+    },
     title: {
         type: String,
         required: true
@@ -18,6 +22,10 @@ const postSchema = new mongoose.Schema({
     },
     content: {
         type: String
+    },
+    saved_by_users: {
+        type: [{type:mongoose.Schema.Types.ObjectId, ref: "Users"}],
+        default: []
     },
     author: {
         type: mongoose.Schema.Types.ObjectId,

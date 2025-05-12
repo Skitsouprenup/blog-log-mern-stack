@@ -22,6 +22,7 @@ const SinglePost = () => {
   const {slug, id} = useParams()
 
   const { isPending, error, data } = 
+    //revalidate query cache if id or slug in queryKey changes
     useQuery({ queryKey: ['post',id,slug], queryFn: () => fetchPost(id, slug) })
 
     if(isPending) {
@@ -74,7 +75,7 @@ const SinglePost = () => {
           <AuthorInfo data={data?.author}/>
 
           {/* Actions */}
-          <Actions />
+          <Actions postId={id}/>
 
           {/* Search Box */}
           <Search placeholder='Search for posts...'/>

@@ -90,7 +90,7 @@ const PostList = () => {
               loader={<h4>Loading...</h4>}
               endMessage={
                 <p className='py-[1rem]'>
-                  <b>There's no post to be seen.</b>
+                  <b>There's no more post to be seen.</b>
                 </p>
               }
             >
