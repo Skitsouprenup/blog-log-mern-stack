@@ -1,35 +1,25 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { useAuth, useUser } from '@clerk/clerk-react'
+import { useMutation } from "@tanstack/react-query"
 import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
-import { useNavigate } from "react-router"
 import { toast } from "react-toastify"
 
-const checkIfPostSavedByUser = async (postId, getToken) => {
-    
+const getPostFeaturedStatus = async (postId, getToken) => {
     const token = await getToken()
-
-    const apiUrl = `${import.meta.env.VITE_API_URL}/users/saved/${postId}`
+    const apiUrl = `${import.meta.env.VITE_API_URL}/posts/feature/${postId}`
     const res = await axios.get(apiUrl, {
         headers: {
           Authorization: `Bearer ${token}`
         }
       })
     return res.data
-  }
+}
 
-const useActionTanstack = (postId) => {
-    const {user} = useUser()
-    const {getToken} = useAuth()
-    const queryClient = useQueryClient()
+const useActionTanstack = (postId, queryClient, getToken, navigate) => {
 
-    const navigate = useNavigate()
-
-    const query =
-    //revalidate query cache if postId in queryKey changes 
-    useQuery({ 
-        queryKey: ['usersavedposts',postId], 
-        queryFn: () => checkIfPostSavedByUser(postId, getToken) 
+    const featuredQuery = useQuery({ 
+        queryKey: ['featuredpost',postId], 
+        queryFn: () => getPostFeaturedStatus(postId, getToken),
+        onError: (error) => console.log(error)
     })
 
     const saveMutation = useMutation({
@@ -46,7 +36,7 @@ const useActionTanstack = (postId) => {
         onSuccess: () => {
             //refresh savedposts cache 
             queryClient.invalidateQueries({queryKey: ['usersavedposts',postId]})
-          },
+        },
     })
 
     const deleteMutation = useMutation({
@@ -64,7 +54,25 @@ const useActionTanstack = (postId) => {
         }
     })
 
-    return [saveMutation, deleteMutation, query]
+    const featureMutation = useMutation({
+        mutationFn: async (isFeatured) => {
+            const token = await getToken()
+            return axios.patch(`${import.meta.env.VITE_API_URL}/posts/feature/${postId}`, 
+            {
+                isFeatured
+            }, 
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({queryKey: ['featuredpost',postId]})
+        },
+    })
+
+    return [featureMutation, featuredQuery, saveMutation, deleteMutation]
 }
 
 export default useActionTanstack

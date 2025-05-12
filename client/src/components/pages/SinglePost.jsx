@@ -4,12 +4,13 @@ import Search from '../partials/Search'
 import CommentContainer from '../partials/singlepost/CommentContainer'
 import AuthorInfo from '../partials/singlepost/AuthorInfo'
 
-import { Link, useParams } from 'react-router'
-import { useQuery } from '@tanstack/react-query'
+import { Link, useNavigate, useParams } from 'react-router'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
 import PostSubInfo from '../partials/PostSubInfo'
 
 import ImgKitImage from '../utils/ImgKitImage'
+import { useAuth, useUser } from '@clerk/clerk-react'
 
 const fetchPost = async (postId, slug) => {
   const apiUrl = `${import.meta.env.VITE_API_URL}/posts/${postId}/${slug}`
@@ -18,6 +19,10 @@ const fetchPost = async (postId, slug) => {
 }
 
 const SinglePost = () => {
+  const {user} = useUser()
+  const {getToken} = useAuth()
+  const queryClient = useQueryClient()
+  const navigate = useNavigate()
 
   const {slug, id} = useParams()
 
@@ -65,7 +70,7 @@ const SinglePost = () => {
           </div>
 
           {/* Comment List */}
-          <CommentContainer postId={data?._id} />
+          <CommentContainer postId={data?._id} queryClient={queryClient} getToken={getToken}/>
         </div>
 
         {/* Sidebar */}
@@ -75,7 +80,11 @@ const SinglePost = () => {
           <AuthorInfo data={data?.author}/>
 
           {/* Actions */}
-          <Actions postId={id}/>
+          <Actions postId={id} 
+            author={data?.author} navigate={navigate}
+            queryClient={queryClient} getToken={getToken}
+            user={user}
+          />
 
           {/* Search Box */}
           <Search placeholder='Search for posts...'/>

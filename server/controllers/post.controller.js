@@ -87,9 +87,16 @@ export const createPost = async (req,res) => {
 
 export const deletePost = async (req,res) => {
     const clerk_Id = req.auth.userId
+    const userRole = req.auth.sessionClaims?.metadata?.role || "user"
 
-    const user = await checkClerkUser(res, clerk_Id)
-    if(!user) return
+    let user = null
+
+    if(userRole !== 'admin') {
+        user = await checkClerkUser(res, clerk_Id)
+        // Must be a registered user recorded in the database or
+        // an admin to delete post
+        if(!user) return
+    }
 
     const post = await PostModel.findOne({_id: req.params.id}, 'saved_by_users image_id').
     populate('saved_by_users')
@@ -113,14 +120,69 @@ export const deletePost = async (req,res) => {
 
     if(post?.image_id) deletePostCoverImg(post.image_id)
 
-    const deletedPost = await PostModel.findByIdAndDelete({
-        _id:req.params.id,
-        author:user._id
-    })
+    let deletedPost = null
+
+    if(userRole !== 'admin') {
+        deletedPost = await PostModel.findByIdAndDelete({
+            _id:req.params.id,
+            author:user?._id
+        })
+    }
+    else deletedPost = await PostModel.findByIdAndDelete({_id:req.params.id})
 
     if(!deletedPost) {
         return res.status(403).json("Invalid Authorization.")
     }
     
     return res.status(200).json("Post Deleted")
+}
+
+export const getPostFeatured = async (req, res) => {
+    const clerk_Id = req.auth.userId
+    const userRole = req.auth.sessionClaims?.metadata?.role || "user"
+    const postId = req.params.id
+
+    let user = null
+
+    if(userRole !== 'admin') {
+        user = await checkClerkUser(res, clerk_Id)
+        // Must be a registered user recorded in the database or
+        // an admin to delete post
+        if(!user) return
+    }
+
+    const post = await PostModel.findOne({_id: postId}, 'isFeatured')
+
+    if(!post) {
+        return res.status(500).json("Can't find post. Internal Server Error.")
+    }
+
+    return res.status(200).json({isFeatured: post?.isFeatured})
+}
+
+export const featurePost = async (req, res) => {
+    const clerk_Id = req.auth.userId
+    const userRole = req.auth.sessionClaims?.metadata?.role || "user"
+    const postId = req.params.id
+
+    const isFeatured = req.body.isFeatured
+
+    let user = null
+
+    if(userRole !== 'admin') {
+        user = await checkClerkUser(res, clerk_Id)
+        // Must be a registered user recorded in the database or
+        // an admin to delete post
+        if(!user) return
+    }
+
+    const post = await PostModel.updateOne({_id: postId}, {
+        isFeatured: !isFeatured 
+    })
+
+    if(!post) {
+        return res.status(500).json("Can't update post. Internal Server Error.")
+    }
+
+    return res.status(200).json("Post Updated.")
 }

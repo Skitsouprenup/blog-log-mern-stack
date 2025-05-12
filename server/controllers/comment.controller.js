@@ -27,14 +27,25 @@ export const createComment = async (req, res) => {
 
 export const deleteComment = async (req, res) => {
     const clerk_Id = req.auth.userId
-    
-    const user = await checkClerkUser(res, clerk_Id)
-    if(!user) return
+    const userRole = req.auth.sessionClaims?.metadata?.role || "user"
 
-    const deletedPost = await CommentModel.findByIdAndDelete({
-        _id:req.params.id,
-        author:user._id
-    })
+    let user = null
+    if(userRole !== 'admin') {
+        user = await checkClerkUser(res, clerk_Id)
+        if(!user) return
+    }
+
+    let filter = {}
+
+    if(userRole !== 'admin') {
+        filter = {
+            _id:req.params.id,
+            author:user?._id
+        }
+    }
+    else filter = {_id:req.params.id}
+
+    const deletedPost = await CommentModel.findByIdAndDelete(filter)
 
     if(!deletedPost) {
         return res.status(403).json("Invalid Authorization.")

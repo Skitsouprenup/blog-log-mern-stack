@@ -1,7 +1,6 @@
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import Comment from './Comment'
 import axios from 'axios'
-import { useUser } from '@clerk/clerk-react'
 
 const fetchComments = async (postId) => {
     const apiUrl = `${import.meta.env.VITE_API_URL}/comments/${postId}`
@@ -9,11 +8,26 @@ const fetchComments = async (postId) => {
     return res.data
   }
 
-const CommentList = ({postId, mutation}) => {
-    const {user} = useUser()
-
+const CommentList = ({postId, mutation, queryClient, getToken}) => {
     const { isPending, error, data } = 
         useQuery({ queryKey: ['comments', postId], queryFn: () => fetchComments(postId) })
+
+    const deleteComment = useMutation({
+        mutationFn: async (commentId) => {
+            const token = await getToken()
+            return axios.delete(`${import.meta.env.VITE_API_URL}/comments/${commentId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({queryKey: ['comments', postId]})
+        },
+        onError: (error) => {
+            console.log(error)
+        }
+    })
 
     if(isPending) {
         return <div className='text-md font-semibold'>Loading...</div>
@@ -47,12 +61,14 @@ const CommentList = ({postId, mutation}) => {
                                 username: user.username
                             }
                         }
-                    }/>
+                    }
+                    deleteComment={deleteComment}
+                    />
                 )
             }
             {
                 data?.comments && data.comments.map((item,index) => (
-                    <Comment data={item} key={index} />
+                    <Comment data={item} key={index} deleteComment={deleteComment}/>
                 ))
             }
         </div>

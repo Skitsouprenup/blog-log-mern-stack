@@ -27,6 +27,10 @@ const postSchema = new mongoose.Schema({
         type: [{type:mongoose.Schema.Types.ObjectId, ref: "Users"}],
         default: []
     },
+    isFeatured: {
+        type: Boolean,
+        default: false
+    },
     author: {
         type: mongoose.Schema.Types.ObjectId,
         //Refers to models/document objectId in the database

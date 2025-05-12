@@ -1,4 +1,3 @@
-import mongoose from "mongoose"
 import PostModel from "../db/models/post.model.js"
 import UserModel from "../db/models/user.model.js"
 import { checkClerkUser } from "../utils/clerk.js"
