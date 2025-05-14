@@ -1,4 +1,3 @@
-import React from 'react'
 import { Link } from 'react-router'
 import Categories from '../partials/home/Categories'
 import FeaturedPosts from '../partials/home/FeaturedPosts'
@@ -54,7 +53,7 @@ const Home = () => {
           </div>
         </div>
       </div>
-      <SearchBox placeholder='Search...'/>
+      <SearchBox placeholder='Search...' moveTo='/posts'/>
       <Categories />
       <FeaturedPosts />
       <RecentPosts />

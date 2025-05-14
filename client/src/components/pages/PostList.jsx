@@ -5,17 +5,24 @@ import axios from 'axios'
 import PostEntry from '../partials/PostEntry'
 
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { useSearchParams } from 'react-router'
 
-const fetchPosts = async (pageParam) => {
+const fetchPosts = async (pageParam, searchParams) => {
+  const urlQueries = Object.fromEntries([...searchParams])
+
   const apiUrl = `${import.meta.env.VITE_API_URL}/posts`
   const res = await axios.get(apiUrl, {
-    params: {page: pageParam, limit: 5}
+    //Query parameters
+    params: {page: pageParam, limit: 5, ...urlQueries}
   })
+
+  //console.log([...searchParams])
   return res.data
 }
 
 const PostList = () => {
   const [open, setOpen] = useState(false)
+  const [searchParams] = useSearchParams()
 
   const {
     data,
@@ -26,8 +33,8 @@ const PostList = () => {
     isFetchingNextPage,
     status,
   } = useInfiniteQuery({
-    queryKey: ['posts'],
-    queryFn: ({pageParam}) => fetchPosts(pageParam),
+    queryKey: ['posts', searchParams.toString()],
+    queryFn: ({pageParam}) => fetchPosts(pageParam, searchParams),
     initialPageParam: 1,
     //'lastPage' contains the return value of the function in 'queryFn'
     //'pages' stores the number of queried pages in the database.
@@ -68,7 +75,7 @@ const PostList = () => {
             <h1
               className='text-xl font-semibold'
             >
-              Software
+              Posts
             </h1>
 
             <button 
@@ -102,16 +109,16 @@ const PostList = () => {
             </InfiniteScroll>
             
             {/* Sidebar(Desktop) */}
-            <div 
-              className='flex flex-col gap-y-[1.5rem] top-0 h-max 
-              sticky p-[0.5rem] max-lg:hidden'
-            >
-              <SideMenu />
-            </div>
-
-            <div className={`max-lg:pb-[2rem] lg:hidden flex-col gap-y-[1.5rem] ${open ? 'flex' : 'hidden'}`}>
-              <SideMenu />
-            </div>
+              <div 
+                className='flex flex-col gap-y-[1.5rem] top-0 h-max 
+                sticky p-[0.5rem] max-lg:hidden'
+              >
+                <SideMenu />
+              </div>
+              {/*Sidebar(Mobile) */}
+              <div className={`max-lg:pb-[2rem] lg:hidden flex-col gap-y-[1.5rem] ${open ? 'flex' : 'hidden'}`}>
+                <SideMenu />
+              </div>
           </div>
         </div>
       </div>

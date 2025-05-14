@@ -1,4 +1,4 @@
-import React from 'react'
+import { Link } from 'react-router'
 import { blogCategories } from '../../../js/categories'
 
 const Categories = () => {
@@ -9,14 +9,14 @@ const Categories = () => {
     >
       {
         blogCategories.map((item, index) => (
-          <h3 
+          <button 
             className='
             text-lg font-medium cursor-pointer min-w-[100px] text-center max-sm:w-[calc(50%-0.5rem)]
             hover:underline p-[0.25rem] rounded-xl hover:bg-emerald-400 max-sm:border max-sm:border-gray-300'
             key={index}
           >
-            {item}
-          </h3>
+            <Link to={item.path}>{item.name}</Link>
+          </button>
         ))
       }
     </div>

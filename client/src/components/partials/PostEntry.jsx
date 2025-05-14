@@ -1,4 +1,3 @@
-import React from 'react'
 import ImgKitImage from '../utils/ImgKitImage.jsx'
 
 import { Link } from 'react-router'

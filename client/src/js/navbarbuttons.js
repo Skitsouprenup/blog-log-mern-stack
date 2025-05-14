@@ -1,3 +1,5 @@
+const writeBlogBtnHidden = 'max-md:block hidden'
+
 const defaultStyleDesktop = 'p-[0.75rem] cursor-pointer hover:bg-amber-200 rounded-lg font-medium'
 export const btnDesktop = [
     {
@@ -7,13 +9,13 @@ export const btnDesktop = [
     },
     {
         className: defaultStyleDesktop,
-        title: 'Trending',
-        href: '/'
+        title: 'Posts',
+        href: '/posts'
     },
     {
-        className: defaultStyleDesktop,
-        title: 'Most Popular',
-        href: '/'
+        className: `${defaultStyleDesktop} ${writeBlogBtnHidden}`,
+        title: 'Write',
+        href: '/write'
     },
     {
         className: 'bg-emerald-400 p-[0.75rem] rounded-lg '+
@@ -25,6 +27,8 @@ export const btnDesktop = [
 
 const defaultStyleMobile = 'cursor-pointer p-[0.75rem] w-[125px]'+
 ' border border-zinc-400/50 rounded-lg font-medium'
+
+
 export const btnMobile = [
     {
         className: defaultStyleMobile,
@@ -33,13 +37,13 @@ export const btnMobile = [
     },
     {
         className: defaultStyleMobile,
-        title: 'Trending',
-        href: '/'
+        title: 'Posts',
+        href: '/posts'
     },
     {
-        className: defaultStyleMobile,
-        title: 'Most Popular',
-        href: '/'
+        className: `${defaultStyleMobile} ${writeBlogBtnHidden}`,
+        title: 'Write',
+        href: '/write'
     },
     {
         className: 'bg-emerald-400 p-[0.5rem] rounded-lg '+

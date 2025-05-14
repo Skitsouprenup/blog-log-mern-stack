@@ -8,19 +8,20 @@ const linkStyles = 'cursor-pointer w-[fit-content] text-sm font-medium'+
 
 const PostSubInfo = ({data, containerClassName}) => {
 
+
     return (
         <div
-            className='flex gap-x-[0.5rem] items-center max-sm:pb-[0.5rem]'
+            className='flex flex-col gap-x-[0.5rem] max-sm:pb-[0.5rem]'
         >
             <div
                 className={containerClassName}
             >
                 <button type='button' className='leading-[140%] max-sm:text-[0.8rem] flex'>
-                    <p className='max-sm:hidden'>Author:&nbsp;&nbsp;</p>
+                    <p className='max-sm:hidden text-[0.95rem]' >Author:&nbsp;&nbsp;</p>
                     <span 
                         className={linkStyles}
                     >
-                        <Link>{data?.author?.username}</Link>
+                        <Link to={`/posts?author=${data?.author?.username}`}>{data?.author?.username}</Link>
                     </span>
                 </button>
                 <button type='button' className='leading-[140%] max-sm:text-[0.8rem] flex'>
@@ -28,13 +29,14 @@ const PostSubInfo = ({data, containerClassName}) => {
                     <span 
                         className={linkStyles}
                     >
-                        <Link>
+                        <Link to={`/posts?category=${data?.category}`}>
                             {data?.category}
                         </Link>
                     </span>&nbsp;&nbsp;
                     <p className='text-gray-600 max-sm:hidden'>{format(data?.createdAt)}</p>
                 </button>
             </div>
+            <p className='text-[0.95rem]'>{`Views: ${data?.visit_count}`}</p>
         </div>
     )
 }

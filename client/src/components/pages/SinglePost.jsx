@@ -87,7 +87,7 @@ const SinglePost = () => {
           />
 
           {/* Search Box */}
-          <Search placeholder='Search for posts...'/>
+          <Search placeholder='Search for posts...' moveTo='/posts'/>
         </div>
       </div>
 

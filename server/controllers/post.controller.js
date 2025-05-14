@@ -1,6 +1,7 @@
 import CommentModel from "../db/models/comment.model.js"
 import PostModel from "../db/models/post.model.js"
 import { checkClerkUser } from "../utils/clerk.js"
+import { filterPostQueries } from "../utils/general.js"
 import { deletePostCoverImg, uploadPostCoverImg } from "../utils/imgkit.js"
 
 export const getPosts = async (req, res) => {
@@ -12,14 +13,40 @@ export const getPosts = async (req, res) => {
     const postsCount = await PostModel.countDocuments()
     const morePages = page*limit < postsCount
 
-    const posts = await PostModel.find({},'_id image createdAt category title desc slug').
-    limit(limit).skip((page-1)*limit).populate('author', 'username -_id').sort({ createdAt: -1 })
+    const userQuery = req.query
+    const filteredQuery = {}
+    filterPostQueries(userQuery, filteredQuery)
+    const sortQuery = filteredQuery?.sort || { createdAt: -1 }
+
+    let authorPopulateObj = {
+        path: 'author',
+        select: 'username',
+    }
+    if(filteredQuery?.author) {
+        authorPopulateObj['match'] = {'username': {$eq: filteredQuery.author}}
+    }
+
+    /* Delete queries that are not need in the find() filter */
+    delete filteredQuery['sort']
+    delete filteredQuery['author']
+
+    const posts = await PostModel.find(filteredQuery,'_id image createdAt category title desc slug visit_count').
+    limit(limit).skip((page-1)*limit).populate(authorPopulateObj).sort(sortQuery)
     return res.status(200).json({posts, morePages})
+}
+
+export const getFeaturedPost = async (req,res) => {
+    const posts = await PostModel.find({ isFeatured: true}).limit(4).sort({createdAt: -1})
+
+    if(!posts) {
+        return res.status(500).json("Can't fetch post. Internal Server Error.")
+    }
+    return res.status(200).json({posts})
 }
 
 export const getPost = async (req, res) => {
     const post = await PostModel.findOne({_id: req.params.id}, 
-    'image createdAt category title desc content author _id').populate('author', 'username avatar -_id')
+    'image createdAt category title desc content author _id visit_count').populate('author', 'username avatar -_id')
     return res.status(200).json(post)
 }
 

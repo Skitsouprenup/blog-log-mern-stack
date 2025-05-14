@@ -11,6 +11,13 @@ export const encodeImageFileAsURL = (e, setImg) => {
   reader.readAsDataURL(file);
 }
 
+export const firstLetterCapital = (text) => {
+  if(text?.length === 0) return
+  let letter = text[0]
+  letter = letter.toUpperCase()
+  return letter+text.substring(text?.length === 1 ? 0 : 1)
+}
+
 export const trim_text = (text, threshold = 10, trim_ln = 7) => {
     if(threshold < 10) return text
     //-3 because three dots will replace the 
