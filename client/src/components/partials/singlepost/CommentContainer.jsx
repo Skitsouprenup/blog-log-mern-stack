@@ -45,18 +45,18 @@ const CommentContainer = ({postId, queryClient, getToken}) => {
   }
 
   return (
-    <div className='flex flex-col gap-y-[0.75rem] pt-[2rem]'>
+    <div className='flex flex-col gap-y-[0.75rem] pt-[2rem] w-[100%]'>
       <h3 className='font-medium text-lg'>Comments</h3>
 
       <form 
         onSubmit={handleSubmit}
         className='flex gap-[0.75rem] p-[0.5rem] bg-stone-50 rounded-xl 
-        w-[100%] drop-shadow-md items-center'
+         drop-shadow-md items-center'
       >
         <textarea
           ref={commentRef}
           rows='2'
-          className='resize-none flex-1 text-xl outline-none border border-zinc-300 rounded-lg p-[0.25rem]'
+          className='resize-none flex-1 text-xl outline-none border border-zinc-300 rounded-lg p-[0.25rem] w-[100%]'
           name="content"
         ></textarea>
 

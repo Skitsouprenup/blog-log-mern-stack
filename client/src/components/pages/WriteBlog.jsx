@@ -60,35 +60,6 @@ const WriteBlog = () => {
     }
   })
 
-  /*
-    Set main div's height to screen height and center its
-    content if the div's height is less than the viewport height.
-    Otherwise, you will have a blank white space on the bottom
-    of your screen because main layout's box with background color 
-    takes the size of the main div.
-
-    Note: This is only implemented during initial render due to
-    this useEffect. To implement this dynamically, add the changeHeight
-    function in 'onchange' event of main div.
-  */
-  useEffect(() => {
-
-    const changeHeight = () => {
-      if(mainDivRef.current !== null) {
-        if(mainDivRef.current.style.height === '') {
-          const rect = mainDivRef.current.getBoundingClientRect();
-          const viewportHeight = window.innerHeight
-
-          if(rect.height < viewportHeight) {
-            mainDivRef.current.style.height = '100vh'
-            mainDivRef.current.style.justifyContent = 'center'
-          }
-        }
-      }
-    }
-    changeHeight()
-  },[])
-
   const removeCoverImg = () => {
     setCoverImg(null)
   }
@@ -126,87 +97,89 @@ const WriteBlog = () => {
 
   return (
     <div 
-      className='flex flex-col gap-y-[1rem] sm:p-[2rem] max-sm:p-[1rem]'
+      className='h-screen w-[100%]'
       ref={mainDivRef}
     >
-      <h1 className='font-semibold text-xl'>Create Post</h1>
-      <form onSubmit={handleSubmit} className='flex flex-col gap-y-[1rem]'>
+      <div className='flex flex-col gap-y-[1rem] sm:p-[2rem] max-sm:p-[1rem] bg-neutral-200'>
+        <h1 className='font-semibold text-xl'>Create Post</h1>
+          <form onSubmit={handleSubmit} className='flex flex-col gap-y-[1rem]'>
 
-        <div className='flex gap-x-[0.75rem] items-center'>
-          <label className='p-[0.5rem] bg-stone-50 rounded-xl cursor-pointer
-            w-[fit-content] drop-shadow-sm hover:bg-emerald-300'>
-              <input type="file" className='hidden' onChange={(e) => encodeImageFileAsURL(e, setCoverImg)}/>
-              Add Cover Image
-          </label>
-          {
-            coverImg && (
-              <div className='flex gap-x-[0.75rem] items-center'>
-                <p>{trim_text(coverImg?.name, 20, 15)}</p>
-                <button type='button' onClick={removeCoverImg}>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" className="hover:fill-red-400 cursor-pointer bi bi-x-square-fill" viewBox="0 0 16 16">
-                    <path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm3.354 4.646L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 1 1 .708-.708"/>
-                  </svg>
-                </button>
-              </div>
-            )
-          }
-        </div>
+            <div className='flex gap-x-[0.75rem] items-center'>
+              <label className='p-[0.5rem] bg-stone-50 rounded-xl cursor-pointer
+                w-[fit-content] drop-shadow-sm hover:bg-emerald-300'>
+                  <input type="file" className='hidden' onChange={(e) => encodeImageFileAsURL(e, setCoverImg)}/>
+                  Add Cover Image
+              </label>
+              {
+                coverImg && (
+                  <div className='flex gap-x-[0.75rem] items-center'>
+                    <p>{trim_text(coverImg?.name, 20, 15)}</p>
+                    <button type='button' onClick={removeCoverImg}>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" className="hover:fill-red-400 cursor-pointer bi bi-x-square-fill" viewBox="0 0 16 16">
+                        <path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm3.354 4.646L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 1 1 .708-.708"/>
+                      </svg>
+                    </button>
+                  </div>
+                )
+              }
+            </div>
 
-        <input 
-          type='text'
-          maxLength='100'
-          placeholder='Title...'
-          className='p-[0.5rem] bg-stone-50 rounded-xl w-[fit-content] drop-shadow-sm text-lg'
-          name='title'
-          required
-        />
-        <div className='flex gap-x-[0.75rem] items-center'>
-          <p className='font-medium'>Choose Category:&nbsp;</p>
-          <select
-            className='p-[0.5rem] pr-[1rem] bg-stone-50 rounded-xl w-[fit-content] drop-shadow-sm'
-            name='category' defaultValue='General'
-          >
-            <option value='General'>General</option>
-            <option value='Software'>Sotfware</option>
-            <option value='Travel'>Travel</option>
-            <option value='Gaming'>Gaming</option>
-            <option value='Art'>Art</option>
-          </select>
-        </div>
-        <div 
-          className='flex gap-[0.75rem] p-[0.5rem] bg-stone-50 rounded-xl 
-          w-[100%] drop-shadow-md items-center'
-        >
-          <textarea
-            rows='2'
-            maxLength='1000'
-            className='resize-none flex-1 text-lg outline-none rounded-lg p-[0.25rem]'
-            placeholder='Short Description...'
-            name='desc'
-          ></textarea>
-        </div>
+            <input 
+              type='text'
+              maxLength='100'
+              placeholder='Title...'
+              className='p-[0.5rem] bg-stone-50 rounded-xl w-[fit-content] drop-shadow-sm text-lg'
+              name='title'
+              required
+            />
+            <div className='flex gap-x-[0.75rem] items-center'>
+              <p className='font-medium'>Choose Category:&nbsp;</p>
+              <select
+                className='p-[0.5rem] pr-[1rem] bg-stone-50 rounded-xl w-[fit-content] drop-shadow-sm'
+                name='category' defaultValue='General'
+              >
+                <option value='General'>General</option>
+                <option value='Software'>Sotfware</option>
+                <option value='Travel'>Travel</option>
+                <option value='Gaming'>Gaming</option>
+                <option value='Art'>Art</option>
+              </select>
+            </div>
+            <div 
+              className='flex gap-[0.75rem] p-[0.5rem] bg-stone-50 rounded-xl 
+              w-[100%] drop-shadow-md items-center'
+            >
+              <textarea
+                rows='2'
+                maxLength='1000'
+                className='resize-none flex-1 text-lg outline-none rounded-lg p-[0.25rem]'
+                placeholder='Short Description...'
+                name='desc'
+              ></textarea>
+            </div>
 
-        <ReactQuill
-          theme="snow" 
-          className='bg-stone-50 h-[100%] rounded-lg'
-          value={content}
-          onChange={setContent}
-          on
-          modules={modules}
-        />
+            <ReactQuill
+              theme="snow" 
+              className='bg-stone-50 h-[100%] rounded-lg'
+              value={content}
+              onChange={setContent}
+              on
+              modules={modules}
+            />
 
-        <FormError formError={formError} setFormError={setFormError}/>
-  
-        <button 
-          type='submit' 
-          className='p-[0.5rem] rounded-xl cursor-pointer w-[fit-content] drop-shadow-sm 
-          not-disabled:bg-green-500 not-disabled:hover:bg-emerald-400
-          disabled:cursor-not-allowed disabled:bg-gray-600'
-          disabled={mutation.isPending}
-        >
-          {mutation.isPending ? 'Creating Post...' : 'Create Post'}
-        </button>
-      </form>
+            <FormError formError={formError} setFormError={setFormError}/>
+      
+            <button 
+              type='submit' 
+              className='p-[0.5rem] rounded-xl cursor-pointer w-[fit-content] drop-shadow-sm 
+              not-disabled:bg-green-500 not-disabled:hover:bg-emerald-400
+              disabled:cursor-not-allowed disabled:bg-gray-500'
+              disabled={mutation.isPending}
+            >
+              {mutation.isPending ? 'Creating Post...' : 'Create Post'}
+            </button>
+          </form>
+      </div>
     </div>
   )
 }

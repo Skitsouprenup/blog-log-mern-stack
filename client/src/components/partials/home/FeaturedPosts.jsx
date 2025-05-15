@@ -13,7 +13,11 @@ const FeaturedPosts = () => {
 
     const { isPending, error, data } = 
     //revalidate query cache if id or slug in queryKey changes
-    useQuery({ queryKey: ['featuredpost'], queryFn: () => fetchFeaturedPosts() })
+    useQuery({ 
+        queryKey: ['featuredposts'], 
+        queryFn: () => fetchFeaturedPosts(),
+        refetchOnWindowFocus: false,
+    })
 
     if(isPending) {
         return <div className="px-[0.5rem]">Loading...</div>
@@ -28,19 +32,19 @@ const FeaturedPosts = () => {
 
     return (
         <div
-            className='flex gap-x-[0.5rem] p-[0.5rem] max-lg:flex-col'
+            className='flex gap-x-[0.5rem] gap-y-[0.5rem] max-lg:flex-col lg:justify-center'
         >
             {
-                data.posts.length > 1 && <MainFeatured data={data[0]} />
+                data.posts.length > 0 && <MainFeatured data={data.posts[0]} />
             }
 
             {/* Sub Featured Post */}
             {/*Note: line-clamp has limited browser support */}
-            <div className='flex flex-col gap-y-[0.5rem] max-lg:gap-y-[1rem]'>
-                {data && data.posts.length > 2 &&
+            <div className='flex flex-col gap-y-[0.5rem] max-lg:gap-y-[1rem] lg:w-[49%]'>
+                {data?.posts?.length >= 2 &&
                     data.posts.map((item, index) => {
                         if(index > 0) {
-                            <SubFeatured data={item} />
+                            return <SubFeatured data={item} />
                         }else return null
                     })
                 }

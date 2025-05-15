@@ -44,12 +44,12 @@ app.use((error, req, res, next) => {
 app.use(clerkMiddleware())
 
 /* Middlewares */
-//This middleware parses incoming requests with JSON payloads
-//Except for '/posts/write' because I need to edit its request body
-//size to be bigger. For '/webhooks' route, we don't want express
-//to modify the request body coming to that route. Otherwise,
-//webhook verification will fail
-app.use(/^(?!\/posts\/write$|\/webhooks$)/, express.json())
+// This middleware parses incoming requests with JSON payloads
+// Except for '/posts/write' and '/posts/edit'  because I need to 
+// edit their request body size to be bigger. For '/webhooks' 
+// route, we don't want express to modify the request body 
+// coming to that route. Otherwise, webhook verification will fail
+app.use(/^\/(?!posts\/write$|posts\/edit\/[a-zA-Z0-9]+$|webhooks$).*/, express.json())
 
 /*Routers */
 app.use("/users",userRouter)

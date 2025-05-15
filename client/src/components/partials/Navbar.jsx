@@ -1,7 +1,7 @@
 import {useState} from 'react'
 import BlogLogo from '../../assets/blog_log_logo.png'
 import { btnDesktop, btnMobile } from '../../js/navbarbuttons'
-import { Link } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 
 import { SignedIn, SignedOut, UserButton } from '@clerk/clerk-react'
 
@@ -32,35 +32,40 @@ const NavbarButtonWrapper = ({wrap, children}) => {
     }
 }
 
-const NavbarButton = ({item}) => {
+const NavbarButton = ({item, click}) => {
     return (
         <button
-            type="button" 
+            type="button"
+            onClick={(e) => click(e, item.href)}
             className={item.className}
         >
-            <Link to={item.href}>
-                {item.title}
-            </Link>
+            {item.title}
         </button>
     )
 }
 
 const Navbar = () => {
     const[open, setOpen] = useState(false)
+    const navigate = useNavigate()
+
+    const toggleDialog = (e, href) => {
+        setOpen(!open)
+        navigate(href)
+    }
 
     return (
         <div 
-            className='sm:p-[0.5rem] sm:border-b sm:border-gray-400/50'
+            className='lg:p-[0.5rem] lg:border-b lg:border-gray-400/50'
         >
             {/*Desktop */}
-            <div className='hidden sm:flex gap-x-[0.25rem] px-[2rem]'>
+            <div className='hidden lg:flex gap-x-[0.25rem] px-[2rem] '>
                 <SiteLogo />
 
                 <div className='flex gap-x-[0.75rem] items-center'>
                     {
                         btnDesktop.map((item, index) => (
                             <NavbarButtonWrapper wrap={item.title !== 'Login' ? false : true} key={index}>
-                                <NavbarButton item={item}/>
+                                <NavbarButton item={item} click={toggleDialog}/>
                             </NavbarButtonWrapper>
                         ))
                     }
@@ -71,7 +76,7 @@ const Navbar = () => {
             </div>
 
             {/* Mobile */}
-            <div className={`sm:hidden fixed z-10 w-screen bg-zinc-300`}>
+            <div className={`lg:hidden fixed z-10 w-screen bg-neutral-200`}>
 
                 <div className='p-[0.5rem] flex justify-between gap-x-[0.5rem] border-b border-gray-400/50'>
                     <SiteLogo />
@@ -111,17 +116,18 @@ const Navbar = () => {
                     
                 </div>
 
+                {/* Mobile Sidebar For Navbar Options */}
                 <div 
                     className={`fixed flex flex-col gap-y-[0.5rem] justify-center items-center h-screen w-screen
                      border-1 border-double border-gray-400/50 bg-zinc-300
-                    ${!open ? ' right-[-100%]' : 'right-0'} transition-normal duration-200
+                    ${!open ? 'right-[-100%]' : 'right-0'} transition-normal duration-200
                     ${open ? 'opacity-100' : 'opacity-0'}
                     `}
                 >
                     {
                         btnMobile.map((item, index) => (
                             <NavbarButtonWrapper wrap={item.title !== 'Login' ? false : true} key={index}>
-                                <NavbarButton item={item}/>
+                                <NavbarButton item={item} click={toggleDialog}/>
                             </NavbarButtonWrapper>
                         ))
                     }
@@ -129,7 +135,7 @@ const Navbar = () => {
             </div>
             {/* Dummy div to fake navbar still being part 
                 of document flow even if the navbar is fixed */}
-            <div className='sm:hidden w-screen h-[4rem]'></div>
+            <div className='lg:hidden w-screen h-[4rem]'></div>
         </div>
     )
 }

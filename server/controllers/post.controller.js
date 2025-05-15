@@ -36,7 +36,7 @@ export const getPosts = async (req, res) => {
 }
 
 export const getFeaturedPost = async (req,res) => {
-    const posts = await PostModel.find({ isFeatured: true}).limit(4).sort({createdAt: -1})
+    const posts = await PostModel.find({ isFeatured: true}).populate('author').limit(4).sort({createdAt: -1})
 
     if(!posts) {
         return res.status(500).json("Can't fetch post. Internal Server Error.")
@@ -62,22 +62,12 @@ export const createPost = async (req,res) => {
     //console.log(req.body)
     let slug = req.body.title.replace(/ /g, '-').toLowerCase()
     // Sanitize slug because it will be placed in the url
-    // to mitigate potential XSS or other kind of attacks.
+    // to mitigate/prevent potential attacks.
     // The regex here only allows alpha-numeric characters and
     // the '-' character.
     // '^' is a negation meaning, all characters that don't
     // match the condition below will be removed
     slug = slug.replace(/[^a-zA-Z0-9\-]/g, '')
-
-    // Sanitize description and title because it will be placed in an HTML document.
-    // Note: React automatically converts everything we put in a component
-    // in String. This may not be needed unless you're putting them in HTML document
-    // using innerHTML() or react's dangerouslySetInnerHTML() functions.
-    // Replace angled brackets with their symbols to mitigate XSS attacks
-    let postDesc = req.body.desc.replace(/</g, '&lt;')
-    postDesc = postDesc.replace(/>/g, '&gt;')
-    let postTitle = req.body.title.replace(/</g, '&lt;')
-    postTitle = postTitle.replace(/>/g, '&gt;')
 
     const coverImg = req.body.coverImg
     //Note: 'content' property comes from react-quill editor may not be
@@ -110,6 +100,67 @@ export const createPost = async (req,res) => {
     }
     
     return res.status(500).json("Can't Create Post. Internal Server Error.")
+}
+
+export const editPost = async (req,res) => {
+    const clerk_Id = req.auth.userId
+    const postId = req.params.id
+
+    const user = await checkClerkUser(res, clerk_Id)
+    if(!user) return
+
+    const targetPost = await PostModel.findOne({_id: postId}).populate('author')
+    const requestBody = req.body
+
+    if(targetPost.author._id.toString() !== user._id.toString()) {
+        return res.status(401).json('Invalid Authentication')
+    }
+
+    if(requestBody.title === targetPost.title) {
+        delete requestBody['title']
+    }
+    else {
+        let slug = req.body.title.replace(/ /g, '-').toLowerCase()
+        slug = slug.replace(/[^a-zA-Z0-9\-]/g, '')
+        requestBody['slug'] = slug
+    }
+
+    const coverImg = requestBody?.coverImg
+    delete requestBody['coverImg']
+
+    const updatedPost = await PostModel.findOneAndUpdate({_id: postId}, requestBody)
+    if(updatedPost && coverImg) {
+
+        const postCover = await uploadPostCoverImg(coverImg, user._id, updatedPost._id)
+
+        //If cover image is not uploaded
+        if(!postCover) {
+            //Delete the newly created post.
+            await PostModel.deleteOne({ _id: updatedPost._id })
+            return res.status(500).json("Cover Image Upload Failed.")
+        }
+
+        //Delete previous image
+        if(updatedPost?.image_id) deletePostCoverImg(updatedPost.image_id)
+
+        updatedPost.image = postCover.url
+        updatedPost.image_id = postCover.fileId
+        await updatedPost.save()
+
+        return res.status(201).json({
+            id: updatedPost._id,
+            slug: updatedPost.slug
+        })
+    }
+    
+    if(updatedPost) {
+        return res.status(201).json({
+            id: updatedPost._id,
+            slug: updatedPost.slug
+        })
+    }
+
+    return res.status(500).json("Can't Edit Post. Internal Server Error.")
 }
 
 export const deletePost = async (req,res) => {

@@ -1,4 +1,7 @@
-import React from 'react'
+import { Link } from "react-router"
+import { trim_text } from "../../../../js/utils"
+import ImgKitImage from "../../../utils/ImgKitImage"
+import PostSubInfo from "../../PostSubInfo"
 
 const SubFeatured = ({data}) => {
 
@@ -7,30 +10,26 @@ const SubFeatured = ({data}) => {
         <div className='flex flex-col gap-y-[0.5rem] max-lg:gap-y-[1rem]'>
             <div className='flex gap-x-[0.5rem]'>
                 <div>
-                    <div><img src={testImg} alt="image" className='max-sm:max-w-[150px] sm:max-w-[200px] rounded-lg'/></div>
+                    <div>
+                        <ImgKitImage width='200px' src={data?.image} className='max-sm:max-w-[150px] sm:max-w-[200px] rounded-lg'/>
+                    </div>
                 </div>
 
                 <div className='flex flex-col gap-y-[0.5rem] max-sm:line-clamp-4'>
                     <div
                         className='flex gap-x-[0.5rem] items-center max-sm:pb-[0.5rem]'
                     >
-                        <div
-                            className='flex gap-x-[0.5rem] sm:flex-col'
-                        >
-                            <p className='leading-[140%] max-sm:text-[0.8rem]'>
-                                <span className='max-sm:hidden'>Author:&nbsp;&nbsp;</span>
-                                <span className='text-blue-400'>John Doe</span>
-                            </p>
-                            <p className='leading-[140%] max-sm:text-[0.8rem]'>
-                                <span className='text-blue-400'>Software&nbsp;&nbsp;</span>
-                                <span className='text-gray-600 max-sm:hidden'>2 Days Ago</span>
-                            </p>
-                        </div>
+                        <PostSubInfo data={data}/>
+                    </div>
+                    <div className='sm:text-lg font-semibold max-sm:text-[0.8rem] hover:underline'>
+                        <Link to={`/${data._id}/${data.slug}`}>
+                            {data.title}
+                        </Link>
                     </div>
                     <div 
-                        className='sm:text-xl font-semibold max-sm:text-[0.8rem]'
+                        className='text-md max-lg:text-center text-gray-800 font-medium'
                     >
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris a viverra neque.
+                        {trim_text(data?.desc || '', 150, 100)}
                     </div>
                 </div>
             </div>
