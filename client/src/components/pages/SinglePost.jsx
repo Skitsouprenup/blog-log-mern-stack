@@ -123,7 +123,12 @@ const SinglePost = () => {
             </div>
 
             {/* Comment List */}
-            <CommentContainer postId={data?._id} queryClient={queryClient} getToken={getToken}/>
+            <CommentContainer 
+              postId={data?._id} 
+              queryClient={queryClient} 
+              getToken={getToken}
+              user={user}
+            />
           </div>
 
           {/* Sidebar */}

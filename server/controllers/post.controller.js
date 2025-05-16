@@ -85,7 +85,7 @@ export const createPost = async (req,res) => {
     const coverImg = req.body.coverImg
     //Note: 'content' property comes from react-quill editor may not be
     //properly sanitized.
-    const record = { author:user._id, slug, ...req.body, desc: postDesc, title: postTitle}
+    const record = { author:user._id, slug, ...req.body}
     delete record['coverImg']
 
     const newPost = new PostModel(record)

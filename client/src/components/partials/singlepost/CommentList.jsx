@@ -8,7 +8,7 @@ const fetchComments = async (postId) => {
     return res.data
   }
 
-const CommentList = ({postId, mutation, queryClient, getToken}) => {
+const CommentList = ({postId, mutation, queryClient, getToken, user}) => {
     const { isPending, error, data } = 
         useQuery({ queryKey: ['comments', postId], queryFn: () => fetchComments(postId) })
 
@@ -55,7 +55,7 @@ const CommentList = ({postId, mutation, queryClient, getToken}) => {
                     <Comment data={
                         {
                             content: `${mutation.variables.content} (Sending...)`,
-                            createdAt: new Date.now(),
+                            createdAt: Date.now(),
                             author: {
                                 avatar: user.imageUrl,
                                 username: user.username

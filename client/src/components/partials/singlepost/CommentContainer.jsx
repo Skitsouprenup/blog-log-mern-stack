@@ -1,10 +1,10 @@
 import { useRef, useState } from 'react'
 import CommentList from './CommentList'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 import FormError from '../../utils/FormError'
 import axios from 'axios'
 
-const CommentContainer = ({postId, queryClient, getToken}) => {
+const CommentContainer = ({postId, queryClient, getToken, user}) => {
   const commentRef = useRef(null)
 
   const [formError, setFormError] = useState('')
@@ -77,6 +77,7 @@ const CommentContainer = ({postId, queryClient, getToken}) => {
         mutation={mutation} 
         queryClient={queryClient} 
         getToken={getToken}
+        user={user}
       />
     </div>
   )

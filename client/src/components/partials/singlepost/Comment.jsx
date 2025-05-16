@@ -1,6 +1,15 @@
+import { useEffect } from 'react'
+import { useState } from 'react'
 import {format} from 'timeago.js'
 
 const Comment = ({data, deleteComment}) => {
+  const [deleteCom, setDeleteCom] = useState(false)
+
+  useEffect(() => {
+    if(!deleteComment.isPending) {
+      setDeleteCom(false)
+    }
+  },[deleteComment.isPending])
 
   return (
     <div className='flex flex-col gap-y-[1rem] bg-stone-50 rounded-xl p-[1rem] drop-shadow-sm'>
@@ -11,9 +20,12 @@ const Comment = ({data, deleteComment}) => {
           <p className='text-gray-600'>{format(data?.createdAt)}</p>
         </div>
         {
-          deleteComment.isPending ? (<p>Deleting...</p>) :
+          deleteCom ? (<p>Deleting...</p>) :
           (<button 
-            onClick={() => deleteComment.mutate(data?._id)}
+            onClick={() => {
+              setDeleteCom(true)
+              deleteComment.mutate(data?._id)
+            }}
             type="button" 
             className='hover:text-red-400 cursor-pointer text-md p1-[0.5rem]'
             disabled={deleteComment.isPending}
