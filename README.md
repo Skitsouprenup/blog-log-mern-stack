@@ -3,6 +3,21 @@ A Simple and responsive full stack blog app created using reactjs for frontend a
 
 Click this [link](https://youtu.be/v7SdfdaXJYw) to view the quick demo of this project.
 
+# Functionalities
+* Login/Registration using Clerk
+* Featured Posts
+* Save(Favorites) Posts
+* Search Posts
+* Form Validation
+* Rich Text Editor (React Quill)
+* Responsive UI
+* Infinite Scroll (in 'PostList.jsx')
+* Create Users
+* CRUD Operations for Posts
+* Post Comments
+* Sort Options
+* User Roles
+
 # Technologies Used
 * **HTML5**
 * **CSS3**
@@ -11,11 +26,11 @@ Click this [link](https://youtu.be/v7SdfdaXJYw) to view the quick demo of this p
 * **TailwindCSS**
 * **Mongodb**
 * **NodeJS**
+* **ExpressJS**
 * **Clerk**
 * **Imagekit.io**
 * **React Quill**
-
-# Notes
+* **Tanstack Query**
 
 ## Clerk's Webhook
 This app uses clerk's webhook in order to save user information to the database
@@ -33,16 +48,15 @@ delta's format. Use [setContents()](https://quilljs.com/docs/api#setcontents) an
 your delta's object in the parameter in order to display its HTML format in the editor.
 
 In this project, I used the plain HTML text format and store it in the database. To improve
-security, get the delta's format of the HTML in the editor and store it in the database 
-instead. Next, use [Quill Delta to HTML Converter](https://www.npmjs.com/package/quill-delta-to-html) 
+security, get the delta's format of the HTML in the editor, convert the object to string and store it in the database. Next, use [Quill Delta to HTML Converter](https://www.npmjs.com/package/quill-delta-to-html) 
 on your frontend once you send your delta content to your frontend in order to convert it
-back to HTML format that you can put in a `<div>` using **dangerouslySetInnerHTML** prop.
+back to HTML format that you can put in a `<div>` using **dangerouslySetInnerHTML** prop. Don't forget to convert the string you are going to send to object. `Take note, make sure your data is trusted and sanitized before putting it in the prop.`
 
 To secure this project further, once your delta's object is in the server, convert the
 object to string and then replace angled brackets with their equivalent HTML symbols or remove 
 them and then store the string on your server. When sending it to client, convert the string
 back to object before sending or send the string and convert it back to object on the 
-client side. 
+client side. `Take note, this process could impact your server's performance especially if the string that your app is evaluating is massive.`
 
 # Testing this project
 You can clone this project and test it for yourself. However, you need to create .env files
