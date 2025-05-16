@@ -1,4 +1,4 @@
-# Me Blog: Blogger App for bloggers
+# Blog Log: Blogger App for bloggers
 A Simple and responsive full stack blog app created using reactjs for frontend and nodejs for backend.
 
 Click this [link](https://youtu.be/v7SdfdaXJYw) to view the quick demo of this project.
