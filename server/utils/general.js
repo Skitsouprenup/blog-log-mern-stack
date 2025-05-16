@@ -34,8 +34,8 @@ export const filterPostQueries = (userQuery, filteredQuery) => {
                         filteredQuery[key] = {visit_count: -1}
                         filteredQuery['createdAt'] = {
                             //convert days to millis = days * hours * minutes * seconds * millis
-                            //The result 7 days behind current date.
-                            $gte: Date.now() - 7 * 24 * 60 * 60 * 1000
+                            //The result 5 days behind current date.
+                            $gte: Date.now() - 5 * 24 * 60 * 60 * 1000
                         }
                     }
                     break

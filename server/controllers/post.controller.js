@@ -35,8 +35,21 @@ export const getPosts = async (req, res) => {
     return res.status(200).json({posts, morePages})
 }
 
-export const getFeaturedPost = async (req,res) => {
-    const posts = await PostModel.find({ isFeatured: true}).populate('author').limit(4).sort({createdAt: -1})
+export const getRecentPosts = async (req, res) => {
+    const posts = await PostModel.find({createdAt: {
+            //Posts from previous week
+            $gte: Date.now() - (7 * 24 * 60 * 60 * 1000)
+        }
+    }).populate('author').sort({createdAt: -1})
+
+    if(!posts) {
+        return res.status(500).json("Can't fetch post. Internal Server Error.")
+    }
+    return res.status(200).json({posts})
+}
+
+export const getFeaturedPosts = async (req,res) => {
+    const posts = await PostModel.find({isFeatured: true}).populate('author').limit(4).sort({createdAt: -1})
 
     if(!posts) {
         return res.status(500).json("Can't fetch post. Internal Server Error.")
@@ -75,7 +88,6 @@ export const createPost = async (req,res) => {
     const record = { author:user._id, slug, ...req.body, desc: postDesc, title: postTitle}
     delete record['coverImg']
 
-    
     const newPost = new PostModel(record)
     const createdPost = await newPost.save()
     if(createdPost) {

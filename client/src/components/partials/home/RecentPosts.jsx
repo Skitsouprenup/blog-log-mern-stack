@@ -1,41 +1,51 @@
-import testImg from '../../../assets/test_img.jpg'
+import { useQuery } from '@tanstack/react-query'
+import PostEntry from '../PostEntry'
+import axios from 'axios'
+
+const fetchRecentPosts = async () => {
+    const apiUrl = `${import.meta.env.VITE_API_URL}/posts/recent`
+    const res = await axios.get(apiUrl)
+    return res.data
+}
 
 const RecentPosts = () => {
-  return (
-    <div className='flex gap-y-[1rem] p-[0.5rem] flex-col'>
-        <h1 className='text-[1.5rem] font-semibold'>Recent Posts</h1>
 
-        <div className='flex gap-x-[0.5rem]'>
-            <div>
-                <div><img src={testImg} alt="image" className='max-sm:max-w-[150px] sm:max-w-[200px] rounded-lg'/></div>
-            </div>
+    const { isPending, error, data } = 
+    //revalidate query cache if id or slug in queryKey changes
+    useQuery({ 
+        queryKey: ['recentposts'], 
+        queryFn: () => fetchRecentPosts(),
+        refetchOnWindowFocus: false,
+    })
 
-            <div className='flex flex-col gap-y-[0.5rem] max-sm:line-clamp-4'>
-                <div
-                    className='flex gap-x-[0.5rem] items-center max-sm:pb-[0.5rem]'
-                >
-                    <div
-                        className='flex gap-x-[0.5rem] sm:flex-col'
-                    >
-                        <p className='leading-[140%] max-sm:text-[0.8rem]'>
-                            <span className='max-sm:hidden'>Author:&nbsp;&nbsp;</span>
-                            <span className='text-blue-400'>John Doe</span>
-                        </p>
-                        <p className='leading-[140%] max-sm:text-[0.8rem]'>
-                            <span className='text-blue-400'>Software&nbsp;&nbsp;</span>
-                            <span className='text-gray-600 max-sm:hidden'>2 Days Ago</span>
-                        </p>
-                    </div>
-                </div>
-                <div 
-                    className='sm:text-xl font-semibold max-sm:text-[0.8rem]'
-                >
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris a viverra neque.
-                </div>
+    if(!data || !data?.posts || data?.posts?.length === 0 || error) {
+        return (
+            <div className='flex gap-y-[1rem] p-[0.5rem] flex-col'>
+                <h1 className='text-[1.5rem] font-semibold'>Recent Posts</h1>
+                <h2 className='text-[1rem] text-gray-800 font-medium'>
+                    {
+                        error ? 'Error Fetching Data' : 'No Recent Posts'
+                    }
+                </h2>
             </div>
+        )
+    }
+
+    return (
+        <div className='flex gap-y-[1rem] p-[0.5rem] flex-col'>
+            <h1 className='text-[1.5rem] font-semibold'>Recent Posts</h1>
+            {
+                isPending && (
+                    <h2 className='text-[1rem] text-gray-800 font-medium'>Loading...</h2>
+                )
+            }
+            {
+                !isPending && data?.posts?.map((item) => (
+                    <PostEntry key={item?._id} data={item} />
+                ))
+            }
         </div>
-    </div>
-  )
+    )
 }
 
 export default RecentPosts

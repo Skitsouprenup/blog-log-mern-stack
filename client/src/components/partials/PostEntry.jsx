@@ -22,7 +22,10 @@ const PostEntry = ({data}) => {
             </div>
 
             <div className='flex flex-col gap-y-[0.5rem] max-sm:line-clamp-4'>
-                <PostSubInfo data={data} containerClassName='flex gap-x-[0.5rem] sm:flex-col' />
+                <PostSubInfo 
+                    data={data} 
+                    containerClassName='flex gap-y-[0.25rem] gap-x-[0.5rem] max-sm:flex-col'
+                />
 
                 <div 
                     className='sm:text-lg lg:text-xl font-semibold max-sm:text-[0.8rem]'

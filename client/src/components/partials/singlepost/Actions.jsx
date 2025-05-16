@@ -22,7 +22,7 @@ const Actions = ({postId, author, navigate, queryClient, getToken, user, setEdit
         queryFn: () => checkIfPostSavedByUser(postId, getToken),
     })
 
-    const maxLgStyle = 'max-lg:w-[175px] max-lg:pl-[1.25rem]'
+    const maxLgStyle = 'max-lg:w-[175px] max-lg:pl-[1.75rem]'
 
     const [
         featureMutation,

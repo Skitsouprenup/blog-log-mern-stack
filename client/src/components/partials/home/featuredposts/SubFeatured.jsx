@@ -27,7 +27,7 @@ const SubFeatured = ({data}) => {
                         </Link>
                     </div>
                     <div 
-                        className='text-md max-lg:text-center text-gray-800 font-medium'
+                        className='text-md max-sm:text-sm text-gray-800 font-medium'
                     >
                         {trim_text(data?.desc || '', 150, 100)}
                     </div>

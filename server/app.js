@@ -48,7 +48,10 @@ app.use(clerkMiddleware())
 // Except for '/posts/write' and '/posts/edit'  because I need to 
 // edit their request body size to be bigger. For '/webhooks' 
 // route, we don't want express to modify the request body 
-// coming to that route. Otherwise, webhook verification will fail
+// coming to that route. Otherwise, webhook verification will fail.
+// Don't forget the .* at the end of the grouping, this expression
+// accepts every path once the path is not one on the paths inside
+// the grouping.
 app.use(/^\/(?!posts\/write$|posts\/edit\/[a-zA-Z0-9]+$|webhooks$).*/, express.json())
 
 /*Routers */

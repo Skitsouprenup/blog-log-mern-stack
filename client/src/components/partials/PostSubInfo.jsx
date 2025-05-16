@@ -3,15 +3,14 @@ import React from 'react'
 import {format} from 'timeago.js'
 import { Link } from 'react-router'
 
-const linkStyles = 'cursor-pointer w-[fit-content] text-sm font-medium'+
+const linkStyles = 'cursor-pointer w-[fit-content] font-medium max-sm:text-[0.9rem]'+
                     ' text-sky-700 hover:underline hover:text-amber-700 text-[1rem]'
 
 const PostSubInfo = ({data, containerClassName}) => {
 
-
     return (
         <div
-            className='flex flex-col gap-x-[0.5rem] max-sm:pb-[0.5rem]'
+            className='flex flex-col gap-x-[0.5rem] max-sm:pb-[0.5rem] gap-y-[0.25rem]'
         >
             <div
                 className={containerClassName}
